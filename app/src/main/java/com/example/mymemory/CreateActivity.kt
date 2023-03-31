@@ -107,7 +107,7 @@ class CreateActivity : AppCompatActivity() {
                 launchIntentForPhotos()
             }else
             {
-                Toast.makeText(this, "In order to crate game the app needs photos", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "In order to create game the app needs photos", Toast.LENGTH_LONG).show()
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -233,9 +233,13 @@ class CreateActivity : AppCompatActivity() {
                 AlertDialog.Builder(this)
                     .setTitle("Upload complete! Let's play your game '$gameName")
                     .setPositiveButton("OK") { _, _ ->
-                        val resultData = Intent()
-                        resultData.putExtra(EXTRA_GAME_NAME, gameName)
-                        setResult(Activity.RESULT_OK, resultData)
+//                        val resultData = Intent()
+//                        resultData.putExtra(EXTRA_GAME_NAME, gameName)
+//                        setResult(Activity.RESULT_OK, resultData)
+                        val intent = Intent(this,GameActivity::class.java)
+                        intent.putExtra(EXTRA_GAME_NAME, gameName)
+                        intent.putExtra(EXTRA_BOARD_SIZE,boardSize)
+                        startActivity(intent)
                         finish()
                     }.show()
             }
