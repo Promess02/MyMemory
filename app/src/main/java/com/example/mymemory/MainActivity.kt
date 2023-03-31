@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mymemory.models.BoardSize
 import com.example.mymemory.utils.EXTRA_BOARD_SIZE
+import com.example.mymemory.utils.EXTRA_GAME_NAME
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -24,6 +25,7 @@ class MainActivity: AppCompatActivity(){
     private lateinit var playButton: Button
     private lateinit var diffButton: Button
     private lateinit var customBtn: Button
+    private lateinit var playCustBtn: Button
     private val db = Firebase.firestore
     private var gameName: String? = null
     private var boardSize: BoardSize = BoardSize.EASY
@@ -38,6 +40,7 @@ class MainActivity: AppCompatActivity(){
         playButton = findViewById(R.id.PlayBtn)
         diffButton = findViewById(R.id.ChooseBtn)
         customBtn = findViewById(R.id.CustomBtn)
+        playCustBtn = findViewById(R.id.playCustomBtn)
         
         playButton.setOnClickListener {
             val intent = Intent(this, GameActivity::class.java)
@@ -46,15 +49,16 @@ class MainActivity: AppCompatActivity(){
 
         diffButton.setOnClickListener {
             showNewSizeDialog()
-            val intent = Intent(this, GameActivity::class.java)
-            intent.putExtra(EXTRA_BOARD_SIZE,boardSize)
-            startActivity(intent)
         }
 
         customBtn.setOnClickListener {
             showCreationDialog()
         }
 
+        playCustBtn.setOnClickListener {
+            val intent = Intent(this, gameListActivity::class.java)
+            startActivity(intent)
+        }
         /*
         val intent = Intent(this, CreateActivity::class.java)
         intent.putExtra(EXTRA_BOARD_SIZE,BoardSize.MEDIUM)
@@ -70,13 +74,16 @@ class MainActivity: AppCompatActivity(){
             BoardSize.HARD -> radioGroupSize.check(R.id.rbHard)
         }
         showAlertDialog("Choose new size", boardSizeView, View.OnClickListener {
-            boardSize = when (radioGroupSize.checkedRadioButtonId){
+            val desiredBoardSize = when (radioGroupSize.checkedRadioButtonId){
                 R.id.rbEasy -> BoardSize.EASY
                 R.id.rbMedium -> BoardSize.MEDIUM
                 else -> BoardSize.HARD
             }
-            gameName = null
+            val intent = Intent(this, GameActivity::class.java)
+            intent.putExtra(EXTRA_BOARD_SIZE,desiredBoardSize)
+            startActivity(intent)
         })
+
     }
     private fun showAlertDialog(title: String, view: View?, positiveClickListener: View.OnClickListener) {
         AlertDialog.Builder(this)
@@ -98,9 +105,9 @@ class MainActivity: AppCompatActivity(){
             }
             //navigate to a new activity
 
-            val intent = Intent(this,CreateActivity::class.java)
+            var intent = Intent(this,CreateActivity::class.java)
             intent.putExtra(EXTRA_BOARD_SIZE,desiredBoardSize)
-            startActivityForResult(intent, MainActivity.CREATE_REQUEST_CODE)
+            startActivityForResult(intent, CREATE_REQUEST_CODE)
         })
     }
 }

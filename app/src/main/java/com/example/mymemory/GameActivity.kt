@@ -50,11 +50,14 @@ class GameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        boardSize = intent.getSerializableExtra(EXTRA_BOARD_SIZE) as BoardSize
+        gameName = intent.getSerializableExtra(EXTRA_GAME_NAME) as String?
         clRoot = findViewById(R.id.clRoot)
         rvBoard = findViewById(R.id.rvBoard)
         tvNumMoves = findViewById(R.id.tvNumMoves)
         tvNumPairs = findViewById(R.id.tvNumPairs)
 
+        downloadGame(gameName)
         /*
         val intent = Intent(this, CreateActivity::class.java)
         intent.putExtra(EXTRA_BOARD_SIZE,BoardSize.MEDIUM)
@@ -93,33 +96,35 @@ class GameActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode == CREATE_REQUEST_CODE && resultCode== Activity.RESULT_OK){
-            val customGameName = data?.getStringExtra(EXTRA_GAME_NAME)
-            if(customGameName == null){
-                Log.e(TAG,"Null custom game")
-                return
-            }
-            downloadGame(customGameName)
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        if(requestCode == CREATE_REQUEST_CODE && resultCode== Activity.RESULT_OK){
+//            val customGameName = data?.getStringExtra(EXTRA_GAME_NAME)
+//            if(customGameName == null){
+//                Log.e(TAG,"Null custom game")
+//                return
+//            }
+//            downloadGame(customGameName)
+//        }
+//        super.onActivityResult(requestCode, resultCode, data)
+//    }
 
-    private fun downloadGame(customGameName: String) {
-        db.collection("games").document(customGameName).get().addOnSuccessListener { document ->
-            val userImageList = document.toObject(UserImageList::class.java)
-            if(userImageList?.images ==null){
-                Log.e(TAG, "Invalid custom game data")
-                Snackbar.make(clRoot,"Couldn't find the game", Snackbar.LENGTH_LONG).show()
-                return@addOnSuccessListener
+    private fun downloadGame(customGameName: String?) {
+        if(!customGameName.isNullOrEmpty()){
+            db.collection("games").document(customGameName).get().addOnSuccessListener { document ->
+                val userImageList = document.toObject(UserImageList::class.java)
+                if(userImageList?.images ==null){
+                    Log.e(TAG, "Invalid custom game data")
+                    Snackbar.make(clRoot,"Couldn't find the game", Snackbar.LENGTH_LONG).show()
+                    return@addOnSuccessListener
+                }
+                val numCards = userImageList.images.size*2
+                boardSize = BoardSize.getByValue(numCards)
+                customGameImages = userImageList.images
+                setupBoard()
+                gameName = customGameName
+            }.addOnFailureListener{ exception ->
+                Log.e(TAG, "retrieving game", exception)
             }
-            val numCards = userImageList.images.size*2
-            boardSize = BoardSize.getByValue(numCards)
-            customGameImages = userImageList.images
-            setupBoard()
-            gameName = customGameName
-        }.addOnFailureListener{ exception ->
-            Log.e(TAG, "retrieving game", exception)
         }
     }
 
@@ -136,7 +141,7 @@ class GameActivity : AppCompatActivity() {
 
             val intent = Intent(this,CreateActivity::class.java)
             intent.putExtra(EXTRA_BOARD_SIZE,desiredBoardSize)
-            startActivityForResult(intent,CREATE_REQUEST_CODE)
+            startActivity(intent)
         })
     }
 
