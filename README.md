@@ -7,7 +7,7 @@ one activity to another.
 # Default game screen
 ![DefaultGame](https://user-images.githubusercontent.com/121126196/231114486-e2b1ea35-468d-4961-a492-f9c12d8e4dac.png)
 # Choose images screen
-![ChooseScreen](https://user-images.githubusercontent.com/121126196/231129077-b4011bf3-6de1-4457-aca9-56336cbb9067.jpg)
+![ChooseGameScreen](https://user-images.githubusercontent.com/121126196/231129768-6dd35083-a8ab-4c21-b1e5-0198031b41d1.png)
 # Custom game screen
 ![CustomGame](https://user-images.githubusercontent.com/121126196/231125540-35923a0b-3b6f-4db0-ad73-2063bba31d26.png)
 # Custom games list
